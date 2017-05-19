@@ -64,7 +64,6 @@ def prettyPrint(sudoku):
     return result
 
 def backtracking(sudoku):
-
     rowNumber, columnNumber, found = findFirstEmptySpot(sudoku)
 
     print prettyPrint(sudoku)
@@ -102,9 +101,58 @@ def reverseBacktracking(sudoku):
 
     return False
 
+def domainSizeBacktracking(sudoku, sortedList):
+    if len(sortedList) > 0:
+        rowNumber, columnNumber, ignore = sortedList.pop(0)
+    else:
+        return True
+
+    for number in range(1, 10):
+        if acceptNumber(sudoku, rowNumber, columnNumber, number):
+            sudoku[rowNumber][columnNumber] = number
+
+            if backtracking(sudoku):
+                return True
+
+            sudoku[rowNumber][columnNumber] = 0
+
+    return False
+
+def getListExpandByDomainSize(sudoku):
+    l = []
+    for x in range(len(sudoku)):
+        for y in range(len(sudoku)):
+            if sudoku[x][y] == 0:
+                l.append((x, y, getDomainSize(sudoku, x, y)))
+
+    return sorted(l, key = lambda x: x[2])[::-1]
+
+def getDomainSize(soduko, rowNumber, columnNumber):
+    counter = 0
+
+    for x in range(len(sudoku)):
+        if sudoku[rowNumber][x] != 0:
+            counter += 1
+
+    for y in range(len(sudoku)):
+        if sudoku[y][columnNumber] != 0:
+            counter += 1
+
+    length = int(math.sqrt(len(sudoku)))
+    blockRow = rowNumber - rowNumber % length
+    blockColumn = columnNumber - columnNumber % length
+    for x in range(length):
+        for y in range(length):
+            if sudoku[blockRow + x][blockColumn + y] != 0:
+                counter += 1
+
+    return counter
+
 if __name__ == '__main__':
     sudoku = getSudoku("sudoku.txt")
-    if reverseBacktracking(sudoku):
+    sortedList = getListExpandByDomainSize(sudoku)
+    print sortedList
+    if domainSizeBacktracking(sudoku, sortedList):
         print sudoku
     else:
         print "Geen oplossing"
