@@ -1,4 +1,4 @@
-import math
+import math, time
 
 def getSudoku(fileName):
     f = open(fileName, "r")
@@ -63,10 +63,10 @@ def prettyPrint(sudoku):
 
     return result
 
-def backtracking(sudoku):
+def backtracking(sudoku, recursionCounter = 0):
     rowNumber, columnNumber, found = findFirstEmptySpot(sudoku)
 
-    print prettyPrint(sudoku)
+    #print prettyPrint(sudoku)
 
     if not found:
         return True
@@ -82,10 +82,10 @@ def backtracking(sudoku):
 
     return False
 
-def reverseBacktracking(sudoku):
+def reverseBacktracking(sudoku, recursionCounter = 0):
     rowNumber, columnNumber, found = findFirstEmptySpotReverse(sudoku)
 
-    print prettyPrint(sudoku)
+    #print prettyPrint(sudoku)
 
     if not found:
         return True
@@ -101,20 +101,22 @@ def reverseBacktracking(sudoku):
 
     return False
 
-def domainSizeBacktracking(sudoku, sortedList):
-    if len(sortedList) > 0:
-        rowNumber, columnNumber, ignore = sortedList.pop(0)
+def domainSizeBacktracking(sudoku, sortedList, index = 0):
+    if index < len(sortedList):
+        rowNumber, columnNumber, ignore = sortedList[index]
     else:
         return True
 
     for number in range(1, 10):
         if acceptNumber(sudoku, rowNumber, columnNumber, number):
             sudoku[rowNumber][columnNumber] = number
+            index += 1
 
-            if backtracking(sudoku):
+            if domainSizeBacktracking(sudoku, sortedList, index):
                 return True
 
             sudoku[rowNumber][columnNumber] = 0
+            index -= 1
 
     return False
 
@@ -150,9 +152,16 @@ def getDomainSize(soduko, rowNumber, columnNumber):
 
 if __name__ == '__main__':
     sudoku = getSudoku("sudoku.txt")
+    start_time = time.time()
+
     sortedList = getListExpandByDomainSize(sudoku)
     print sortedList
-    if domainSizeBacktracking(sudoku, sortedList):
+
+    solved, recursionCounter = domainSizeBacktracking(sudoku, sortedList)
+    if solved:
         print sudoku
     else:
         print "Geen oplossing"
+
+    print "Recursions: unknown"
+    print "Run Time:", time.time() - start_time, "seconds"
