@@ -63,7 +63,7 @@ def prettyPrint(sudoku):
 
     return result
 
-def backtracking(sudoku, recursionCounter = 0):
+def backtracking(sudoku):
     rowNumber, columnNumber, found = findFirstEmptySpot(sudoku)
 
     #print prettyPrint(sudoku)
@@ -71,7 +71,7 @@ def backtracking(sudoku, recursionCounter = 0):
     if not found:
         return True
 
-    for number in range(1, 10):
+    for number in range(1, len(sudoku) + 1):
         if acceptNumber(sudoku, rowNumber, columnNumber, number):
             sudoku[rowNumber][columnNumber] = number
 
@@ -82,7 +82,7 @@ def backtracking(sudoku, recursionCounter = 0):
 
     return False
 
-def reverseBacktracking(sudoku, recursionCounter = 0):
+def reverseBacktracking(sudoku):
     rowNumber, columnNumber, found = findFirstEmptySpotReverse(sudoku)
 
     #print prettyPrint(sudoku)
@@ -90,7 +90,7 @@ def reverseBacktracking(sudoku, recursionCounter = 0):
     if not found:
         return True
 
-    for number in range(1, 10):
+    for number in range(1, len(sudoku) + 1):
         if acceptNumber(sudoku, rowNumber, columnNumber, number):
             sudoku[rowNumber][columnNumber] = number
 
@@ -107,7 +107,9 @@ def domainSizeBacktracking(sudoku, sortedList, index = 0):
     else:
         return True
 
-    for number in range(1, 10):
+    #print prettyPrint(sudoku)
+
+    for number in range(1, len(sudoku) + 1):
         if acceptNumber(sudoku, rowNumber, columnNumber, number):
             sudoku[rowNumber][columnNumber] = number
             index += 1
@@ -155,10 +157,7 @@ if __name__ == '__main__':
     start_time = time.time()
 
     sortedList = getListExpandByDomainSize(sudoku)
-    print sortedList
-
-    solved, recursionCounter = domainSizeBacktracking(sudoku, sortedList)
-    if solved:
+    if domainSizeBacktracking(sudoku, sortedList):
         print sudoku
     else:
         print "Geen oplossing"
