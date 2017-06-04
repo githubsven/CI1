@@ -101,11 +101,12 @@ def reverseBacktracking(sudoku):
 
     return False
 
-def domainSizeBacktracking(sudoku, sortedList, index = 0):
+def domainSizeBacktracking(sudoku, sortedList, counter, index = 0):
+
     if index < len(sortedList):
         rowNumber, columnNumber, ignore = sortedList[index]
     else:
-        return True
+        return True, counter.count()
 
     #print prettyPrint(sudoku)
 
@@ -114,8 +115,10 @@ def domainSizeBacktracking(sudoku, sortedList, index = 0):
             sudoku[rowNumber][columnNumber] = number
             index += 1
 
-            if domainSizeBacktracking(sudoku, sortedList, index):
-                return True
+
+            if domainSizeBacktracking(sudoku, sortedList, counter, index):
+                counter.up()
+                return True, counter.count()
 
             sudoku[rowNumber][columnNumber] = 0
             index -= 1
@@ -131,7 +134,7 @@ def getListExpandByDomainSize(sudoku):
 
     return sorted(l, key = lambda x: x[2])[::-1]
 
-def getDomainSize(soduko, rowNumber, columnNumber):
+def getDomainSize(sudoku, rowNumber, columnNumber):
     counter = 0
 
     for x in range(len(sudoku)):
@@ -152,15 +155,27 @@ def getDomainSize(soduko, rowNumber, columnNumber):
 
     return counter
 
+
+class Counter:
+    i = 0
+
+    def up(self):
+        self.i = self.i + 1
+
+    def count(self):
+        return self.i
+
 if __name__ == '__main__':
     sudoku = getSudoku("sudoku.txt")
     start_time = time.time()
+    counter = Counter()
 
     sortedList = getListExpandByDomainSize(sudoku)
-    if domainSizeBacktracking(sudoku, sortedList):
-        print sudoku
+    solved, recursion = domainSizeBacktracking(sudoku, sortedList, counter)
+    if solved:
+        print sudoku, recursion
     else:
         print "Geen oplossing"
 
-    print "Recursions: unknown"
+    print "Recursions:", recursion, "times"
     print "Run Time:", time.time() - start_time, "seconds"
