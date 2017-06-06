@@ -159,15 +159,24 @@ class Square:
     value = 0
     domain = []
 
-    def fillDomain(self, sudoku, rowNumber, columNumber):
+    def fillDomain(self, sudoku, rowNumber, columnNumber):
         sudokuSize = len(sudoku)
-        self.domain = [i for i in range(sudokuSize)]
+        domainSet = set()
 
         for x in range(sudokuSize):
-            self.removeFromDomain(sudoku[rowNumber][x])
+            domainSet.add(sudoku[rowNumber][x])
 
         for y in range(sudokuSize):
-            self.removeFromDomain()
+            domainSet.add(sudoku[y][columnNumber])
+
+        blockLength = int(math.sqrt(len(sudoku)))
+        blockRow = rowNumber - rowNumber % blockLength
+        blockColumn = columnNumber - columnNumber % blockLength
+        for x in range(blockLength):
+            for y in range(blockLength):
+                domainSet.add(sudoku[blockRow + x][blockColumn + y])
+
+        self.domain = list(domainSet)
 
     def isDomainEmpty(self):
         return len(self.domain) == 0
