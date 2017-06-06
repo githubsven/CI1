@@ -154,6 +154,18 @@ def getDomainSize(sudoku, rowNumber, columnNumber):
 
     return counter
 
+class Square:
+    value = 0
+    domain = []
+
+    def fillDomain(self, sudoku):
+        domain = []
+
+    def isDomainEmpty(self):
+        return len(self.domain) == 0
+
+    def removeFromDomain(self, val):
+        self.domain.remove(val)
 
 class Counter:
     i = 0
