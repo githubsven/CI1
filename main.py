@@ -131,28 +131,29 @@ def getListExpandByDomainSize(sudoku):
             if sudoku[x][y] == 0:
                 l.append((x, y, getDomainSize(sudoku, x, y)))
 
-    return sorted(l, key = lambda x: x[2])[::-1]
+    return sorted(l, key = lambda x: x[2])
 
 def getDomainSize(sudoku, rowNumber, columnNumber):
-    counter = 0
+    domain = set()
 
     for x in range(len(sudoku)):
         if sudoku[rowNumber][x] != 0:
-            counter += 1
+            domain.add(sudoku[rowNumber][x])
 
     for y in range(len(sudoku)):
         if sudoku[y][columnNumber] != 0:
-            counter += 1
+            domain.add(sudoku[y][columnNumber])
 
-    length = int(math.sqrt(len(sudoku)))
-    blockRow = rowNumber - rowNumber % length
-    blockColumn = columnNumber - columnNumber % length
-    for x in range(length):
-        for y in range(length):
+    blockLength = int(math.sqrt(len(sudoku)))
+    blockRow = rowNumber - rowNumber % blockLength
+    blockColumn = columnNumber - columnNumber % blockLength
+    for x in range(blockLength):
+        for y in range(blockLength):
             if sudoku[blockRow + x][blockColumn + y] != 0:
-                counter += 1
+                domain.add(sudoku[blockRow + x][blockColumn + y])
 
-    return counter
+    return len(sudoku) - len(domain)
+
 
 class Square:
     value = 0
