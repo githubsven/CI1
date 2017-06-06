@@ -102,12 +102,12 @@ def reverseBacktracking(sudoku, counter):
     return False
 
 def domainSizeBacktracking(sudoku, sortedList, counter, index = 0):
-
+    counter.up()
     if index < len(sortedList):
         rowNumber, columnNumber, ignore = sortedList[index]
     else:
         return True, counter.count()
-    counter.up()
+
     #print prettyPrint(sudoku)
 
     for number in range(1, len(sudoku) + 1):
