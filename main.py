@@ -5,12 +5,13 @@ def getSudoku(fileName):
     rows = f.read().split("\n")
 
     width, height = len(rows[0].split()), len(rows)
-    sudoku = [[0 for x in range(width)] for y in range(height)]
+    emptySquare = Square()
+    sudoku = [[emptySquare for x in range(width)] for y in range(height)]
 
     for index in range(len(rows)):
         columns = rows[index].split()
         for counter, column in enumerate(columns):
-            sudoku[index][counter] = (int)(columns[counter])
+            sudoku[index][counter] = sudoku[index][counter].value = (int)(columns[counter])
 
     return sudoku
 
@@ -115,7 +116,6 @@ def domainSizeBacktracking(sudoku, sortedList, counter, index = 0):
             sudoku[rowNumber][columnNumber] = number
             index += 1
 
-
             if domainSizeBacktracking(sudoku, sortedList, counter, index):
                 return True, counter.count()
 
@@ -158,14 +158,22 @@ class Square:
     value = 0
     domain = []
 
-    def fillDomain(self, sudoku):
-        domain = []
+    def fillDomain(self, sudoku, rowNumber, columNumber):
+        sudokuSize = len(sudoku)
+        self.domain = [i for i in range(sudokuSize)]
+
+        for x in range(sudokuSize):
+            self.removeFromDomain(sudoku[rowNumber][x])
+
+        for y in range(sudokuSize):
+            self.removeFromDomain()
 
     def isDomainEmpty(self):
         return len(self.domain) == 0
 
     def removeFromDomain(self, val):
         self.domain.remove(val)
+
 
 class Counter:
     i = 0
@@ -183,8 +191,8 @@ if __name__ == '__main__':
 
     #sortedList = getListExpandByDomainSize(sudoku)
     #solved, recursion = domainSizeBacktracking(sudoku, sortedList, counter)
-    #solved, recursion = reverseBacktracking(sudoku, counter)
-    solved, recursion = backtracking(sudoku, counter)
+    solved, recursion = reverseBacktracking(sudoku, counter)
+    #solved, recursion = backtracking(sudoku, counter)
     if solved:
         print sudoku
     else:
