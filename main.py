@@ -10,7 +10,7 @@ def getSudoku(fileName):
     for index in range(height):
         columns = rows[index].split()
         for counter, column in enumerate(columns):
-            sudoku[index][counter] = columns[counter]
+            sudoku[index][counter] = (int)(columns[counter])
 
     return sudoku
 
@@ -177,10 +177,7 @@ def forwardChecking(sudoku, counter):
     if len(sortedMCVList) == 0:
         return True, counter.count()
     else:
-        rowNumber, columnNumber, domainSize = sortedMCVList.pop()
-
-    if domainSize == 0:
-        return False
+        rowNumber, columnNumber, domainSize = sortedMCVList[0]
 
     for number in sudoku[rowNumber][columnNumber].getDomain():
         sudoku[rowNumber][columnNumber].value = number
@@ -192,6 +189,7 @@ def forwardChecking(sudoku, counter):
         sudoku[rowNumber][columnNumber].addValueToNeighboursDomain(sudoku, rowNumber, columnNumber)
         sudoku[rowNumber][columnNumber].value = 0
 
+    return False
 
 def getSortedMCVList(sudoku):
     l = []
@@ -275,7 +273,7 @@ class Counter:
         return self.i
 
 if __name__ == '__main__':
-    sudoku = getSudokuWithSquares("sudoku.txt")
+    sudoku = getSudokuWithSquares("sudoku5.txt")
     start_time = time.time()
     counter = Counter()
 
