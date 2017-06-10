@@ -76,7 +76,7 @@ def prettyPrint(sudoku):
     result = ""
     for x in range(length):
         for y in range(length):
-            result += str(sudoku[x][y]) + " "
+            result += str(sudoku[x][y].value) + " "
         result += "\n"
 
     return result
@@ -171,50 +171,27 @@ def getDomainSize(sudoku, rowNumber, columnNumber):
 
     return len(sudoku) - len(domain)
 
-def inRowSquare(sudoku, rowNumber, number):
-    for i in range(len(sudoku[0])):
-        if sudoku[rowNumber][i].value == number:
-            return True
-    return False
-
-def inColumnSquare(sudoku, columnNumber, number):
-    for i in range(len(sudoku)):
-        if sudoku[i][columnNumber].value == number:
-            return True
-    return False
-
-def inBlockSquare(sudoku, rowNumber, columnNumber, number):
-    length = int(math.sqrt(len(sudoku)))
-    blockRow = rowNumber - rowNumber % length
-    blockColumn = columnNumber - columnNumber % length
-    for x in range(length):
-        for y in range(length):
-            if sudoku[blockRow + x][blockColumn + y].value == number:
-                return True
-    return False
-
-def acceptNumberSquare(sudoku, rowNumber, columnNumber, number):
-    return not inRowSquare(sudoku, rowNumber, number) and not inColumnSquare(sudoku, columnNumber, number) and not inBlockSquare(sudoku, rowNumber, columnNumber, number)
-
-
-def forwardChecking(sudoku, sortedMCVList, counter, index = 0):
+def forwardChecking(sudoku, counter):
     counter.up()
-    if index < len(sortedMCVList):
-        rowNumber, columnNumber, domainSize = sortedMCVList[index]
-    else:
+    sortedMCVList = getSortedMCVList(sudoku)
+    if len(sortedMCVList) == 0:
         return True, counter.count()
+    else:
+        rowNumber, columnNumber, domainSize = sortedMCVList.pop()
+
+    if domainSize == 0:
+        return False
 
     for number in sudoku[rowNumber][columnNumber].getDomain():
         sudoku[rowNumber][columnNumber].value = number
-        index += 1
+        sudoku[rowNumber][columnNumber].removeValueFromNeighboursDomain(sudoku, rowNumber, columnNumber)
 
-        if domainSizeBacktracking(sudoku, sortedMCVList, counter, index):
+        if forwardChecking(sudoku, counter):
             return True, counter.count()
 
-        sudoku[rowNumber][columnNumber] = 0
-        index -= 1
+        sudoku[rowNumber][columnNumber].addValueToNeighboursDomain(sudoku, rowNumber, columnNumber)
+        sudoku[rowNumber][columnNumber].value = 0
 
-    return False
 
 def getSortedMCVList(sudoku):
     l = []
@@ -299,8 +276,6 @@ class Counter:
 
 if __name__ == '__main__':
     sudoku = getSudokuWithSquares("sudoku.txt")
-    sortedMCVList = getSortedMCVList(sudoku)
-    print sortedMCVList
     start_time = time.time()
     counter = Counter()
 
@@ -308,9 +283,9 @@ if __name__ == '__main__':
     #solved, recursion = domainSizeBacktracking(sudoku, sortedList, counter)
     #solved, recursion = reverseBacktracking(sudoku, counter)
     #solved, recursion = backtracking(sudoku, counter)
-    solved, recursion = forwardChecking(sudoku, sortedMCVList, counter)
+    solved, recursion = forwardChecking(sudoku, counter)
     if solved:
-        print sudoku
+        print prettyPrint(sudoku)
     else:
         print "Geen oplossing"
 
