@@ -240,20 +240,17 @@ class Square:
         sudokuSize = len(sudoku)
 
         for x in range(sudokuSize):
-            if x != columnNumber:
-                sudoku[rowNumber][x].fillDomain(sudoku, rowNumber, x)
+            sudoku[rowNumber][x].fillDomain(sudoku, rowNumber, x)
 
         for y in range(sudokuSize):
-            if y != rowNumber:
-                sudoku[y][columnNumber].fillDomain(sudoku, y, columnNumber)
+            sudoku[y][columnNumber].fillDomain(sudoku, y, columnNumber)
 
         blockLength = int(math.sqrt(sudokuSize))
         blockRow = rowNumber - rowNumber % blockLength
         blockColumn = columnNumber - columnNumber % blockLength
         for x in range(blockLength):
             for y in range(blockLength):
-                if blockRow + x != rowNumber and blockColumn + y != rowNumber:
-                    sudoku[blockRow + x][blockColumn + y].fillDomain(sudoku, blockRow + x, blockColumn + y)
+                sudoku[blockRow + x][blockColumn + y].fillDomain(sudoku, blockRow + x, blockColumn + y)
 
     def isDomainEmpty(self):
         return len(self.domain) == 0
@@ -272,7 +269,8 @@ class Counter:
         return self.i
 
 if __name__ == '__main__':
-    sudoku = getSudokuWithSquares("sudoku3.txt")
+    sudoku = getSudokuWithSquares("sudoku2.txt")
+    #sudoku2 = getSudoku("sudoku2.txt")
     start_time = time.time()
     counter = Counter()
 
