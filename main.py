@@ -183,7 +183,7 @@ def getDomainSize(sudoku, rowNumber, columnNumber):
 
 def forwardChecking(sudoku, counter):
     counter.up()
-    print prettyPrintSquares(sudoku)
+    #print prettyPrintSquares(sudoku)
     sortedMCVList = getSortedMCVList(sudoku)
     if len(sortedMCVList) == 0:
         return True, counter.count()
@@ -192,13 +192,13 @@ def forwardChecking(sudoku, counter):
 
     for number in sudoku[rowNumber][columnNumber].getDomain():
         sudoku[rowNumber][columnNumber].value = number
-        sudoku[rowNumber][columnNumber].removeValueFromNeighboursDomain(sudoku, rowNumber, columnNumber)
+        sudoku[rowNumber][columnNumber].updateNeighboursDomain(sudoku, rowNumber, columnNumber)
 
         if forwardChecking(sudoku, counter):
             return True, counter.count()
 
-        sudoku[rowNumber][columnNumber].addValueToNeighboursDomain(sudoku, rowNumber, columnNumber)
         sudoku[rowNumber][columnNumber].value = 0
+        sudoku[rowNumber][columnNumber].updateNeighboursDomain(sudoku, rowNumber, columnNumber)
 
     return False
 
@@ -235,23 +235,8 @@ class Square:
             for y in range(blockLength):
                 self.domain.discard(sudoku[blockRow + x][blockColumn + y].value)
 
-    def removeValueFromNeighboursDomain(self, sudoku, rowNumber, columnNumber):
-        sudokuSize = len(sudoku)
 
-        for x in range(sudokuSize):
-            sudoku[rowNumber][x].domain.discard(self.value)
-
-        for y in range(sudokuSize):
-            sudoku[y][columnNumber].domain.discard(self.value)
-
-        blockLength = int(math.sqrt(sudokuSize))
-        blockRow = rowNumber - rowNumber % blockLength
-        blockColumn = columnNumber - columnNumber % blockLength
-        for x in range(blockLength):
-            for y in range(blockLength):
-                sudoku[blockRow + x][blockColumn + y].domain.discard(self.value)
-
-    def addValueToNeighboursDomain(self, sudoku, rowNumber, columnNumber):
+    def updateNeighboursDomain(self, sudoku, rowNumber, columnNumber):
         sudokuSize = len(sudoku)
 
         for x in range(sudokuSize):
@@ -287,7 +272,7 @@ class Counter:
         return self.i
 
 if __name__ == '__main__':
-    sudoku = getSudokuWithSquares("sudoku5.txt")
+    sudoku = getSudokuWithSquares("sudoku3.txt")
     start_time = time.time()
     counter = Counter()
 
