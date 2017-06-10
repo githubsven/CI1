@@ -163,15 +163,16 @@ class Counter:
         return self.i
 
 if __name__ == '__main__':
-    sudoku = getSudoku("sudoku.txt")
+    sudoku = getSudoku("sudoku5.txt")
     start_time = time.time()
     counter = Counter()
 
-    sortedList = getListExpandByDomainSize(sudoku)
+
     try:
-        solved, recursion = domainSizeBacktracking(sudoku, sortedList, counter)
-    #solved, recursion = reverseBacktracking(sudoku, counter)
-    #solved, recursion = backtracking(sudoku, counter)
+        #sortedList = getListExpandByDomainSize(sudoku)
+        #solved, recursion = domainSizeBacktracking(sudoku, sortedList, counter)
+        #solved, recursion = reverseBacktracking(sudoku, counter)
+        solved, recursion = backtracking(sudoku, counter)
         if solved:
             print sudoku
         else:
