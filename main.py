@@ -168,13 +168,20 @@ if __name__ == '__main__':
     counter = Counter()
 
     sortedList = getListExpandByDomainSize(sudoku)
-    solved, recursion = domainSizeBacktracking(sudoku, sortedList, counter)
+    try:
+        solved, recursion = domainSizeBacktracking(sudoku, sortedList, counter)
     #solved, recursion = reverseBacktracking(sudoku, counter)
     #solved, recursion = backtracking(sudoku, counter)
-    if solved:
-        print sudoku
-    else:
-        print "Geen oplossing"
+        if solved:
+            print sudoku
+        else:
+            print "Geen oplossing"
 
-    print "Recursions:", recursion, "times"
+        print "Recursions:", recursion, "times"
+    except TypeError:
+        solved = domainSizeBacktracking(sudoku, sortedList, counter)
+        if solved:
+            print sudoku
+        else:
+            print "Geen oplossing"
     print "Run Time:", (time.time() - start_time) * 1000, "milliseconds"
