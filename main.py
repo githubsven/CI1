@@ -71,12 +71,22 @@ def findFirstEmptySpotReverse(sudoku):
                 return x, y, True
     return 0, 0, False
 
-def prettyPrint(sudoku):
+def prettyPrintSquares(sudoku):
     length = len(sudoku)
     result = ""
     for x in range(length):
         for y in range(length):
             result += str(sudoku[x][y].value) + " "
+        result += "\n"
+
+    return result
+
+def prettyPrint(sudoku):
+    length = len(sudoku)
+    result = ""
+    for x in range(length):
+        for y in range(length):
+            result += str(sudoku[x][y]) + " "
         result += "\n"
 
     return result
@@ -173,6 +183,7 @@ def getDomainSize(sudoku, rowNumber, columnNumber):
 
 def forwardChecking(sudoku, counter):
     counter.up()
+    print prettyPrintSquares(sudoku)
     sortedMCVList = getSortedMCVList(sudoku)
     if len(sortedMCVList) == 0:
         return True, counter.count()
@@ -244,17 +255,20 @@ class Square:
         sudokuSize = len(sudoku)
 
         for x in range(sudokuSize):
-            sudoku[rowNumber][x].domain.add(self.value)
+            if x != columnNumber:
+                sudoku[rowNumber][x].fillDomain(sudoku, rowNumber, x)
 
         for y in range(sudokuSize):
-            sudoku[y][columnNumber].domain.add(self.value)
+            if y != rowNumber:
+                sudoku[y][columnNumber].fillDomain(sudoku, y, columnNumber)
 
         blockLength = int(math.sqrt(sudokuSize))
         blockRow = rowNumber - rowNumber % blockLength
         blockColumn = columnNumber - columnNumber % blockLength
         for x in range(blockLength):
             for y in range(blockLength):
-                sudoku[blockRow + x][blockColumn + y].domain.add(self.value)
+                if blockRow + x != rowNumber and blockColumn + y != rowNumber:
+                    sudoku[blockRow + x][blockColumn + y].fillDomain(sudoku, blockRow + x, blockColumn + y)
 
     def isDomainEmpty(self):
         return len(self.domain) == 0
@@ -279,11 +293,11 @@ if __name__ == '__main__':
 
     #sortedList = getListExpandByDomainSize(sudoku)
     #solved, recursion = domainSizeBacktracking(sudoku, sortedList, counter)
-    #solved, recursion = reverseBacktracking(sudoku, counter)
+    #solved, recursion = reverseBacktracking(sudoku2, counter)
     #solved, recursion = backtracking(sudoku, counter)
     solved, recursion = forwardChecking(sudoku, counter)
     if solved:
-        print prettyPrint(sudoku)
+        print prettyPrintSquares(sudoku)
     else:
         print "Geen oplossing"
 
